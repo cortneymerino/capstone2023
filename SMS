@@ -1,0 +1,28 @@
+using System;
+using System.Collections.Generic;
+using Twilio;
+using Twilio.Rest.Api.V2010.Account;
+using Twilio.Types;
+
+class Example
+{
+  static void Main(string[] args)
+  {
+    var accountSid = "AC89e2aa7725f77db0517072cd2156ab05";
+    var authToken = "[AuthToken]";
+    TwilioClient.Init(accountSid, authToken);
+
+    var messageOptions = new CreateMessageOptions(
+      new PhoneNumber("+17275156524"));
+      messageOptions.From = new PhoneNumber("+18775066386");
+      messageOptions.Body = "The luggage has been loaded on flight:
+Delta578 at 4:30PM EST on 06/25/2023
+Luggage Id:789
+Thank you for flying Delta!
+Enjoy your flight!";
+
+
+    var message = MessageResource.Create(messageOptions);
+    Console.WriteLine(message.Body);
+  }
+}
