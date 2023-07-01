@@ -1,0 +1,29 @@
+SHOW VARIABLES LIKE 'skip_networking';
+
+//The above query should result in skip_networking value= off by default.
+
+SHOW VARIABLES LIKE 'port';
+
+//The above query should result in a port value set to 3306 by default.
+
+//Let’s create and use a database by executing the following script:
+
+create database User;
+use User;
+
+//Once the database is selected, create a user table and insert some values by executing the following script.
+
+CREATE TABLE Users (
+
+phone_number VARCHAR(15) NOT NULL, 
+
+first_name VARCHAR(30) NOT NULL, 
+
+last_name VARCHAR(30) NOT NULL, 
+
+PRIMARY KEY (phone_number)
+
+ );
+
+INSERT INTO Users (phone_number, first_name, last_name)
+VALUES ("+12345678902", "firstname", "lastname");
