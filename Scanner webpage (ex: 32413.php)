@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title> Scanner </title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<?php
+
+
+//MySQL connection parameters. Remains the same for all connections to the database
+$servername = "redacted";
+$username = "redacted";
+$password = "redacted";
+$dbname = "luggage_scanner";
+
+// Create connection
+$conn = mysqli_connect($servername, $username, $password);
+
+// Check connection
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+//Select database
+mysqli_select_db ( $conn , $dbname);
+
+ if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+         $url = "https://";
+    else
+         $url = "http://";
+    // Append the host(domain name, ip) to the URL.
+    $url.= $_SERVER['HTTP_HOST'];
+
+    // Append the requested resource location to the URL
+    $url.= $_SERVER['REQUEST_URI'];
+
+    $url = array_shift(explode('.php', $url));
+
+
+ob_start();
+echo basename($url);
+$contents = ob_get_contents();
+ob_end_clean();
+
+$sql_getluggagestatus = "SELECT luggage_status FROM luggage_history WHERE luggage_history.locator_id = '$contents'";
+$results = mysqli_query($conn, $sql_getluggagestatus);
+
+$sql_getluggageflightno = "SELECT flight_number FROM luggage_history WHERE luggage_history.locator_id = '$contents'";
+$results2 = mysqli_query($conn, $sql_getluggageflightno);
+$row2 = mysqli_fetch_row($results2);
+$flight_no = $row2[0];
+
+$sql_getluggageairline = "SELECT airline_name FROM airline JOIN flight ON airline.airline_id = flight.airline_id JOIN luggage_history ON luggage_history.flight_number = flight.flight_number JOIN luggage ON luggage.flight_id = luggage_history.ref_fly WHERE luggage_history.locator_id = '$contents'";
+$results3 = mysqli_query($conn, $sql_getluggageairline);
+$row3 = mysqli_fetch_row($results3);
+$airline = $row3[0];
+
+
+while($row = mysqli_fetch_assoc($results)){
+    //iterate over all the fields
+    foreach($row as $key => $val){
+        $sql_updatetimestamp = "UPDATE luggage_history SET luggage_history.updated_at = now()";
+        if ($val !== 'on_tarmac') {
+          $sql_updateluggagestatus = "UPDATE luggage_history SET luggage_history.luggage_status = 'on_tarmac' WHERE luggage_history.locator_id = '$contents'";
+          mysqli_query($conn, $sql_updateluggagestatus);
+          mysqli_query($conn, $sql_updatetimestamp);
+          echo "<br>
+	<br>
+	<br>
+	<p class=flair> Flight #" . $flight_no . " </p>
+	<p class=flair> Airline " . $airline ." </p>
+	<br>
+	<br>
+	<p class=idno> ID: " . $contents . "  </p>
+	<br>
+	<br>
+	<p class=corners> Scanned </p>
+	<br>
+	<br>
+	<button type='button'>Back &#8630;</button>";
+          }
+        else {
+          mysqli_query($conn, $sql_updatetimestamp);
+          echo "<br>
+	<br>
+	<br>
+	<p class=flair> Flight #" . $flight_no . " </p>
+	<p class=flair> Airline " . $airline . " </p>
+	<br>
+	<br>
+	<p class=idno> ID: " . $contents . " </p>
+	<br>
+	<br>
+	<p class=corners> Scanned </p>
+	<br>
+	<br>
+	<button type='button'>Back &#8630;</button>";
+        }
+        }
+    }
+
+
+// Close connection
+mysqli_close($conn);
+?>
+
+</body>
+</html>
