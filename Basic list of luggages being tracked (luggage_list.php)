@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title> Luggage List </title>
+</head>
+<body>
+
+<?php
+
+//MySQL connection parameters. Remains the same for all connections to the database
+$servername = "redacted";
+$username = "readacted";
+$password = "redacted";
+$dbname = "luggage_scanner";
+
+// Create connection
+$conn = mysqli_connect($servername, $username, $password);
+
+// Check connection
+if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+}
+
+//Select database
+mysqli_select_db ( $conn , $dbname);
+
+//Do the query
+$query = "select passenger.first_name, passenger.last_name, flight.flight_number, flight.source_point, flight.destination_point, flight.start_time, flight.reaching_time, luggage_history.locator_id, luggage_history.luggage_status, luggage_history.created_at, luggage_history.updated_at, luggage_history.created_by from passenger join flight on passenger.passenger_id = flight.passenger_id join luggage on flight.flight_id = luggage.flight_id join luggage_history on luggage.passenger_id = luggage_history.ref_psgr;";
+$result = mysqli_query($conn, $query);
+//iterate over all the rows
+while($row = mysqli_fetch_assoc($result)){
+    //iterate over all the fields
+    foreach($row as $key => $val){
+        //generate output
+        echo $key . ": " . $val . "<BR />";
+    }
+    echo "<BR />";
+}
+
+// Close connection
+mysqli_close($conn);
+?>
+
+</body>
+</html>
