@@ -1,0 +1,37 @@
+body {
+   font-family: "Roboto", Verdana, Arial, sans-serif;
+   font-size: 20px;
+   width: 80%;
+   margin: auto;
+   text-align: center;
+}
+
+.idno {
+  font-size: 16px;
+}
+
+.flair {
+  font-size: 24px;
+}
+
+.corners {
+  border-radius: 15px;
+  border: 5px solid #8FBC8F;
+  background-color: #a7cfa7;
+  padding: 20px;
+  width: 100px;
+  margin: auto;
+  text-align: center;
+  font-weight: bold;
+}
+
+button {
+  background-color: #3269a8;
+  border-radius: 10px;
+  border: 1px solid;
+  padding: 10px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 18px;
+}
